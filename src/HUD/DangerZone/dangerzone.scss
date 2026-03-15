@@ -9,10 +9,15 @@
   --dz-orange-soft: rgba(234, 116, 36, 0.16);
   --dz-red: #ed4a43;
   --dz-armor: #7fb4ff;
+  --dz-tile-fill: rgba(255, 255, 255, 0.06);
+  --dz-tile-stroke: rgba(255, 255, 255, 0.22);
+  --dz-safe-area: clamp(34px, 3.8vh, 40px);
+  --dz-player-box-height: 210px;
+  --dz-shell-width: min(1040px, calc(100% - (var(--dz-safe-area) * 2)));
   box-sizing: border-box;
   width: 100%;
   height: 100%;
-  padding: 25px;
+  padding: var(--dz-safe-area);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -30,7 +35,7 @@
 .dz-scorebar {
   grid-template-columns: minmax(240px, 0.9fr) auto minmax(240px, 0.9fr);
   align-items: start;
-  width: min(1020px, calc(100% - 120px));
+  width: var(--dz-shell-width);
   margin: 0 auto;
 }
 
@@ -99,6 +104,7 @@
 
 .dz-team-name {
   margin-top: 6px;
+  min-height: 32px;
   font-size: 34px;
   line-height: 0.95;
   font-weight: 700;
@@ -176,10 +182,10 @@
   grid-template-columns: minmax(0, 1fr) minmax(330px, 420px) minmax(0, 1fr);
   align-items: stretch;
   box-sizing: border-box;
-  width: min(1040px, 100%);
-  min-height: 210px;
-  max-height: 210px;
-  padding: 0 25px 25px;
+  width: var(--dz-shell-width);
+  min-height: var(--dz-player-box-height);
+  max-height: var(--dz-player-box-height);
+  padding: 0;
   margin: 0 auto;
 }
 
@@ -187,7 +193,7 @@
   display: flex;
   gap: 10px;
   align-items: stretch;
-  height: 100%;
+  height: var(--dz-player-box-height);
 }
 
 .dz-wing.left {
@@ -200,23 +206,22 @@
 
 .dz-wing-card {
   width: 126px;
-  height: 100%;
+  height: var(--dz-player-box-height);
+  max-height: var(--dz-player-box-height);
   box-sizing: border-box;
   border-radius: 14px;
   padding: 8px 9px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--dz-tile-stroke);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-.dz-wing-card.left {
-  box-shadow:
-    inset 0 0 0 1px rgba(63, 103, 255, 0.2),
-    0 14px 30px rgba(0, 0, 0, 0.3);
-}
-
+.dz-wing-card.left,
 .dz-wing-card.right {
-  box-shadow:
-    inset 0 0 0 1px rgba(234, 116, 36, 0.2),
-    0 14px 30px rgba(0, 0, 0, 0.3);
+  border-color: var(--dz-tile-stroke);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
 }
 
 .dz-wing-card.dead {
@@ -249,6 +254,9 @@
   font-weight: 700;
   line-height: 1.05;
   min-height: 30px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dz-wing-loadout,
@@ -257,11 +265,15 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
+  min-height: 0;
 }
 
 .dz-wing-loadout {
   min-height: 40px;
   margin-top: 8px;
+  flex: 0 0 auto;
+  max-height: 52px;
+  overflow: hidden;
 }
 
 .dz-loadout-item {
@@ -271,9 +283,10 @@
   gap: 6px;
   padding: 5px 7px;
   border-radius: 10px;
-  border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--dz-tile-stroke);
+  background: var(--dz-tile-fill);
   color: var(--dz-text);
+  box-sizing: border-box;
 }
 
 .dz-loadout-item.compact {
@@ -326,17 +339,27 @@
 
 .dz-wing-stats,
 .dz-wing-record {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
   margin-top: 6px;
 }
 
+.dz-wing-stats span,
 .dz-wing-record span {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
+  min-width: 0;
+  min-height: 28px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  border: 1px solid var(--dz-tile-stroke);
+  background: var(--dz-tile-fill);
+  box-sizing: border-box;
   font-size: 11px;
+  text-align: center;
 }
 
 .dz-wing-record svg {
@@ -350,11 +373,19 @@
   overflow: hidden;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--dz-tile-stroke);
+  box-sizing: border-box;
+}
+
+.dz-wing-bars {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+  min-height: 0;
 }
 
 .dz-wing-health {
   height: 7px;
-  margin-top: 6px;
 }
 
 .dz-wing-health span,
@@ -373,8 +404,13 @@
   background: linear-gradient(90deg, #5d90ff, var(--dz-armor));
 }
 
+.dz-wing-health.armor span {
+  background: linear-gradient(90deg, #5d90ff, var(--dz-armor));
+}
+
 .dz-observed-card {
-  height: 100%;
+  height: var(--dz-player-box-height);
+  max-height: var(--dz-player-box-height);
   box-sizing: border-box;
   border-radius: 16px;
   padding: 10px 12px 12px;
@@ -383,10 +419,9 @@
   box-shadow:
     inset 0 0 0 2px rgba(63, 103, 255, 0.55),
     0 18px 36px rgba(0, 0, 0, 0.34);
-}
-
-.dz-observed-spacer {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .dz-observed-top,
@@ -395,6 +430,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  min-width: 0;
 }
 
 .dz-observed-badge {
@@ -412,11 +448,15 @@
 }
 
 .dz-observed-name {
+  min-height: 26px;
   font-size: 28px;
   line-height: 0.95;
   font-weight: 800;
   font-family: "Rounded_Elegance", "Montserrat", sans-serif;
   text-transform: uppercase;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .dz-observed-meta {
@@ -440,7 +480,20 @@
 .dz-observed-stats div {
   padding: 8px 10px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--dz-tile-fill);
+  border: 1px solid var(--dz-tile-stroke);
+  box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.dz-observed-record div span,
+.dz-observed-stats div span,
+.dz-observed-record div strong,
+.dz-observed-stats div strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dz-observed-record strong,
@@ -457,9 +510,11 @@
 }
 
 .dz-observed-weapon,
-.dz-observed-stats {
+.dz-empty-loadout {
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--dz-tile-fill);
+  border: 1px solid var(--dz-tile-stroke);
+  box-sizing: border-box;
 }
 
 .dz-observed-weapon {
@@ -470,23 +525,36 @@
 .dz-observed-weapon .dz-loadout-item {
   width: 100%;
   justify-content: flex-start;
+  min-height: 100%;
+  padding: 0;
+  border-radius: 12px;
+  padding-left: 8px;
+  box-sizing: border-box;
+}
+
+.dz-observed-weapon .dz-empty-loadout {
+  width: 100%;
+  min-height: 100%;
 }
 
 .dz-observed-stats {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   min-width: 190px;
-  padding: 8px;
 }
 
 .dz-observed-loadout {
   min-height: 38px;
   margin-top: 8px;
+  flex: 0 0 auto;
+  max-height: 58px;
+  overflow: hidden;
 }
 
 .dz-observed-bars {
   display: grid;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: auto;
+  min-height: 0;
 }
 
 .dz-observed-bar {
@@ -499,13 +567,30 @@
   justify-content: center;
   min-height: 26px;
   padding: 6px 8px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
   color: var(--dz-muted);
   font-size: 10px;
 }
 
+.dz-bottom-ribbon.no-observed {
+  grid-template-columns: auto auto;
+  justify-content: center;
+  justify-items: center;
+  width: max-content;
+  max-width: var(--dz-shell-width);
+  column-gap: clamp(28px, 5vw, 140px);
+}
+
+.dz-bottom-ribbon.no-observed .dz-wing.left,
+.dz-bottom-ribbon.no-observed .dz-wing.right {
+  width: fit-content;
+  justify-content: center;
+}
+
 @media (max-width: 1320px) {
+  .danger-zone-layout {
+    --dz-player-box-height: auto;
+  }
+
   .dz-scorebar {
     width: 100%;
   }
@@ -526,10 +611,6 @@
 
   .dz-observed-card {
     order: -1;
-  }
-
-  .dz-observed-spacer {
-    display: none;
   }
 }
 
@@ -555,7 +636,7 @@
 
 @media (max-width: 720px) {
   .danger-zone-layout {
-    padding: 25px;
+    --dz-safe-area: 20px;
   }
 
   .dz-score-center {
