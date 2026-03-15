@@ -13,6 +13,7 @@
   --dz-tile-stroke: rgba(255, 255, 255, 0.22);
   --dz-safe-area: clamp(34px, 3.8vh, 40px);
   --dz-player-box-height: 210px;
+  --dz-card-gap: 10px;
   --dz-shell-width: min(1040px, calc(100% - (var(--dz-safe-area) * 2)));
   box-sizing: border-box;
   width: 100%;
@@ -26,17 +27,36 @@
   pointer-events: none;
 }
 
-.dz-scorebar,
+.dz-top-band {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0;
+}
+
 .dz-bottom-ribbon {
   display: grid;
   gap: 12px;
 }
 
-.dz-scorebar {
-  grid-template-columns: minmax(240px, 0.9fr) auto minmax(240px, 0.9fr);
-  align-items: start;
-  width: var(--dz-shell-width);
-  margin: 0 auto;
+.dz-top-hud {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1 1 auto;
+}
+
+.dz-minimap-panel {
+  border-radius: 14px;
+  border: 1px solid var(--dz-tile-stroke);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    var(--dz-panel);
+  box-shadow:
+    0 14px 30px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  position: relative;
 }
 
 .dz-team-panel,
@@ -128,14 +148,13 @@
 
 .dz-score-center {
   display: grid;
-  grid-template-columns: 94px 178px 94px;
+  grid-template-columns: 94px 94px;
   align-items: stretch;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
-.dz-score-box,
-.dz-clock-box {
+.dz-score-box {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,22 +179,10 @@
   color: var(--dz-muted);
 }
 
-.dz-score-box strong,
-.dz-clock-box strong {
+.dz-score-box strong {
   font-size: 44px;
   line-height: 1;
   font-weight: 800;
-}
-
-.dz-clock-box {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  gap: 2px;
-}
-
-.dz-clock-box strong {
-  font-size: 36px;
 }
 
 .dz-bottom-ribbon {
@@ -191,7 +198,7 @@
 
 .dz-wing {
   display: flex;
-  gap: 10px;
+  gap: var(--dz-card-gap);
   align-items: stretch;
   height: var(--dz-player-box-height);
 }
@@ -215,6 +222,7 @@
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+  gap: 5px;
   overflow: hidden;
 }
 
@@ -241,19 +249,19 @@
 }
 
 .dz-wing-badge {
-  width: 34px;
-  height: 34px;
-  margin: -16px auto 6px;
+  width: 30px;
+  height: 30px;
+  margin: 0 auto 2px;
   background: linear-gradient(180deg, #ffffff, #d5d6da);
   color: #131519;
 }
 
 .dz-wing-name {
   text-align: center;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.05;
-  min-height: 30px;
+  min-height: 24px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -269,28 +277,62 @@
 }
 
 .dz-wing-loadout {
-  min-height: 40px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+  min-height: 36px;
+  margin: 0;
   flex: 0 0 auto;
   max-height: 52px;
   overflow: hidden;
+  row-gap: 4px;
+  column-gap: 4px;
+}
+
+.dz-wing-loadout.single {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  max-height: 34px;
+  overflow: hidden;
+}
+
+.dz-wing-loadout.single .dz-loadout-item.compact {
+  width: 100%;
+  justify-content: flex-start;
+  min-height: 30px;
+  padding: 4px 18px 4px 8px;
+}
+
+.dz-wing-loadout.single .dz-loadout-glyph {
+  width: 24px;
+  height: 14px;
+}
+
+.dz-wing-loadout.single .dz-loadout-count {
+  top: 2px;
+  right: 3px;
 }
 
 .dz-loadout-item {
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 7px;
+  gap: 4px;
+  padding: 4px 6px;
   border-radius: 10px;
   border: 1px solid var(--dz-tile-stroke);
   background: var(--dz-tile-fill);
   color: var(--dz-text);
   box-sizing: border-box;
+  min-height: 20px;
 }
 
 .dz-loadout-item.compact {
-  padding: 5px 6px;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 4px 16px 4px 5px;
 }
 
 .dz-loadout-item.active {
@@ -299,8 +341,8 @@
 }
 
 .dz-loadout-glyph {
-  width: 22px;
-  height: 14px;
+  width: 18px;
+  height: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -319,7 +361,7 @@
 }
 
 .dz-loadout-label {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--dz-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -327,13 +369,14 @@
 
 .dz-loadout-count {
   position: absolute;
-  top: -5px;
-  right: -4px;
-  padding: 2px 5px;
+  top: 2px;
+  right: 2px;
+  padding: 1px 4px;
   border-radius: 999px;
   background: #ffffff;
   color: #121519;
   font-size: 8px;
+  line-height: 1;
   font-weight: 800;
 }
 
@@ -341,8 +384,8 @@
 .dz-wing-record {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin-top: 6px;
+  gap: 5px;
+  margin: 0;
 }
 
 .dz-wing-stats span,
@@ -352,13 +395,13 @@
   justify-content: center;
   gap: 4px;
   min-width: 0;
-  min-height: 28px;
+  min-height: 24px;
   padding: 4px 6px;
   border-radius: 10px;
   border: 1px solid var(--dz-tile-stroke);
   background: var(--dz-tile-fill);
   box-sizing: border-box;
-  font-size: 11px;
+  font-size: 10px;
   text-align: center;
 }
 
@@ -372,20 +415,20 @@
 .dz-observed-bar {
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid var(--dz-tile-stroke);
+  background: rgba(8, 10, 14, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.28);
   box-sizing: border-box;
 }
 
 .dz-wing-bars {
   display: grid;
-  gap: 8px;
+  gap: 5px;
   margin-top: auto;
   min-height: 0;
 }
 
 .dz-wing-health {
-  height: 7px;
+  height: 9px;
 }
 
 .dz-wing-health span,
@@ -412,15 +455,15 @@
   height: var(--dz-player-box-height);
   max-height: var(--dz-player-box-height);
   box-sizing: border-box;
-  border-radius: 16px;
-  padding: 10px 12px 12px;
-  background: linear-gradient(180deg, rgba(63, 103, 255, 0.12), transparent),
-    var(--dz-panel-strong);
-  box-shadow:
-    inset 0 0 0 2px rgba(63, 103, 255, 0.55),
-    0 18px 36px rgba(0, 0, 0, 0.34);
+  border-radius: 14px;
+  padding: 8px 9px 10px;
+  border: 1px solid var(--dz-tile-stroke);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
+    var(--dz-panel);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
+  gap: 5px;
   overflow: hidden;
 }
 
@@ -429,17 +472,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
   min-width: 0;
 }
 
 .dz-observed-badge {
-  width: 46px;
-  height: 46px;
+  width: 30px;
+  height: 30px;
   flex: 0 0 auto;
   background: linear-gradient(180deg, #ffffff, #d5d6da);
   color: #131519;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .dz-observed-title {
@@ -448,11 +491,11 @@
 }
 
 .dz-observed-name {
-  min-height: 26px;
-  font-size: 28px;
-  line-height: 0.95;
-  font-weight: 800;
-  font-family: "Rounded_Elegance", "Montserrat", sans-serif;
+  min-height: 24px;
+  font-size: 15px;
+  line-height: 1.05;
+  font-weight: 700;
+  font-family: "Montserrat", sans-serif;
   text-transform: uppercase;
   overflow: hidden;
   white-space: nowrap;
@@ -462,14 +505,21 @@
 .dz-observed-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.dz-observed-meta span {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: 9px;
 }
 
 .dz-observed-record,
 .dz-observed-stats {
   display: grid;
-  gap: 8px;
+  gap: 5px;
 }
 
 .dz-observed-record {
@@ -478,8 +528,8 @@
 
 .dz-observed-record div,
 .dz-observed-stats div {
-  padding: 8px 10px;
-  border-radius: 12px;
+  padding: 4px 6px;
+  border-radius: 10px;
   background: var(--dz-tile-fill);
   border: 1px solid var(--dz-tile-stroke);
   box-sizing: border-box;
@@ -499,19 +549,20 @@
 .dz-observed-record strong,
 .dz-observed-stats strong {
   display: block;
-  margin-top: 4px;
-  font-size: 18px;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 700;
   line-height: 1;
 }
 
 .dz-observed-weapon-row {
-  margin-top: 8px;
+  margin-top: 0;
   align-items: stretch;
 }
 
 .dz-observed-weapon,
 .dz-empty-loadout {
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--dz-tile-fill);
   border: 1px solid var(--dz-tile-stroke);
   box-sizing: border-box;
@@ -519,16 +570,15 @@
 
 .dz-observed-weapon {
   flex: 1 1 auto;
-  padding: 9px;
+  padding: 6px;
 }
 
 .dz-observed-weapon .dz-loadout-item {
   width: 100%;
   justify-content: flex-start;
   min-height: 100%;
-  padding: 0;
-  border-radius: 12px;
-  padding-left: 8px;
+  border-radius: 10px;
+  padding: 4px 16px 4px 6px;
   box-sizing: border-box;
 }
 
@@ -538,21 +588,36 @@
 }
 
 .dz-observed-stats {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  min-width: 190px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+
+.dz-observed-stats div span {
+  font-size: 10px;
 }
 
 .dz-observed-loadout {
-  min-height: 38px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(82px, 1fr));
+  gap: 4px;
+  align-content: start;
+  min-height: 24px;
+  margin-top: 0;
   flex: 0 0 auto;
-  max-height: 58px;
+  max-height: 44px;
   overflow: hidden;
+}
+
+.dz-observed-loadout .dz-loadout-item.compact {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 4px 16px 4px 5px;
+  min-height: 20px;
 }
 
 .dz-observed-bars {
   display: grid;
-  gap: 8px;
+  gap: 5px;
   margin-top: auto;
   min-height: 0;
 }
@@ -577,7 +642,7 @@
   justify-items: center;
   width: max-content;
   max-width: var(--dz-shell-width);
-  column-gap: clamp(28px, 5vw, 140px);
+  column-gap: var(--dz-card-gap);
 }
 
 .dz-bottom-ribbon.no-observed .dz-wing.left,
@@ -591,7 +656,7 @@
     --dz-player-box-height: auto;
   }
 
-  .dz-scorebar {
+  .dz-top-band {
     width: 100%;
   }
 
@@ -615,8 +680,10 @@
 }
 
 @media (max-width: 960px) {
-  .dz-scorebar {
-    grid-template-columns: 1fr;
+  .dz-top-band {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
   }
 
   .dz-score-center {
@@ -640,7 +707,7 @@
   }
 
   .dz-score-center {
-    grid-template-columns: 74px 1fr 74px;
+    grid-template-columns: 74px 74px;
   }
 
   .dz-score-box strong {

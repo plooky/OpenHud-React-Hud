@@ -2,7 +2,10 @@ import type { ComponentType } from "react";
 import { CSGO, Player, Weapon } from "csgogsi";
 import { Kills, Skull } from "../../assets/Icons";
 import * as WeaponIcons from "../../assets/Weapons";
+import Radar from "../Radar/Radar";
 import "./dangerzone.scss";
+
+const DZ_MINIMAP_SIZE = 268;
 
 const weaponLabelOverrides: Record<string, string> = {
   c4: "C4",
@@ -35,14 +38,6 @@ const formatLabel = (value: string | null | undefined) =>
 
 const formatCurrency = (value: number | undefined) =>
   typeof value === "number" ? `$${value.toLocaleString()}` : "--";
-
-const formatCountdown = (seconds: number | undefined) => {
-  if (typeof seconds !== "number" || Number.isNaN(seconds) || seconds <= 0) return null;
-  const totalSeconds = Math.floor(seconds);
-  const minutes = Math.floor(totalSeconds / 60);
-  const remainder = totalSeconds % 60;
-  return `${minutes}:${remainder.toString().padStart(2, "0")}`;
-};
 
 const getWeaponId = (weaponName: string) => weaponName.replace(/^weapon_/, "");
 
@@ -137,9 +132,6 @@ const getHealthWidth = (health: number) => Math.max(0, Math.min((health / 120) *
 
 const getArmorWidth = (armor: number) => Math.max(0, Math.min(armor, 100));
 
-const getPhaseLabel = (game: CSGO) =>
-  formatLabel(game.phase_countdowns.phase || game.round?.phase || game.map.phase);
-
 const getBadgeText = (player: Player) =>
   player.name
     .split(/\s+/)
@@ -185,18 +177,18 @@ const WingPlayerCard = ({
 }: {
   player: Player;
 }) => {
-  const weapons = getVisibleWeapons(player.weapons);
+  const equippedWeapon = player.weapons.find((weapon) => weapon.state === "active") || null;
   const isAlive = player.state.health > 0;
 
   return (
     <article className={`dz-wing-card ${!isAlive ? "dead" : ""}`}>
       <div className="dz-wing-badge">{getBadgeText(player)}</div>
       <div className="dz-wing-name">{player.name}</div>
-      <div className="dz-wing-loadout">
-        {weapons.length ? (
-          weapons.map((weapon) => <LoadoutIcon key={weapon.id} weapon={weapon} compact />)
+      <div className="dz-wing-loadout single">
+        {equippedWeapon ? (
+          <LoadoutIcon weapon={equippedWeapon} compact />
         ) : (
-          <div className="dz-empty-loadout">No loadout</div>
+          <div className="dz-empty-loadout">No active item</div>
         )}
       </div>
       <div className="dz-wing-stats">
@@ -236,7 +228,6 @@ const DangerZoneLayout = ({ game }: { game: CSGO }) => {
   const observedVisibleWeapons = getVisibleWeapons(observedPlayer?.weapons);
   const alivePlayers = players.filter((player) => player.state.health > 0);
   const eliminatedPlayers = players.length - alivePlayers.length;
-  const countdown = formatCountdown(game.phase_countdowns.phase_ends_in);
   const sidePlayers = players;
   const leftCount = Math.ceil(sidePlayers.length / 2);
   const leftPlayers = sidePlayers.slice(0, leftCount);
@@ -244,38 +235,24 @@ const DangerZoneLayout = ({ game }: { game: CSGO }) => {
 
   return (
     <div className="danger-zone-layout">
-      <section className="dz-scorebar">
-        <div className="dz-team-panel left">
-          <div className="dz-team-kicker">Danger Zone</div>
-          <div className="dz-team-name">{formatLabel(game.map.name)}</div>
-          <div className="dz-team-meta">
-            <span>{formatLabel(game.map.mode)}</span>
-            <span>{alivePlayers.length} Alive</span>
-          </div>
+      <section className="dz-top-band">
+        <div
+          className="dz-minimap-panel"
+          style={{ width: `${DZ_MINIMAP_SIZE}px`, height: `${DZ_MINIMAP_SIZE}px` }}
+        >
+          <Radar radarSize={DZ_MINIMAP_SIZE} game={game} />
         </div>
 
-        <div className="dz-score-center">
-          <div className="dz-score-box left">
-            <span>Alive</span>
-            <strong>{alivePlayers.length}</strong>
-          </div>
-          <div className="dz-clock-box">
-            <span>{getPhaseLabel(game)}</span>
-            <strong>{countdown || formatLabel(game.map.phase)}</strong>
-            <small>{players.length} tracked players</small>
-          </div>
-          <div className="dz-score-box right">
-            <span>Out</span>
-            <strong>{eliminatedPlayers}</strong>
-          </div>
-        </div>
-
-        <div className="dz-team-panel right">
-          <div className="dz-team-kicker">Observer Feed</div>
-          <div className="dz-team-name">{observedTargetName}</div>
-          <div className="dz-team-meta">
-            <span>Spectators {game.map.current_spectators}</span>
-            <span>{`Slot ${observedPlayer?.observer_slot ?? "--"}`}</span>
+        <div className="dz-top-hud">
+          <div className="dz-score-center">
+            <div className="dz-score-box left">
+              <span>Alive</span>
+              <strong>{alivePlayers.length}</strong>
+            </div>
+            <div className="dz-score-box right">
+              <span>Out</span>
+              <strong>{eliminatedPlayers}</strong>
+            </div>
           </div>
         </div>
       </section>
@@ -335,10 +312,6 @@ const DangerZoneLayout = ({ game }: { game: CSGO }) => {
                   <div>
                     <span>Round Dmg</span>
                     <strong>{observedPlayer?.state.round_totaldmg ?? "--"}</strong>
-                  </div>
-                  <div>
-                    <span>Observer Slot</span>
-                    <strong>{observedPlayer?.observer_slot ?? "--"}</strong>
                   </div>
                 </div>
               </div>
